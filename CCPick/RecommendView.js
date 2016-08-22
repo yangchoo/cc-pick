@@ -4,56 +4,66 @@
 
 import React, {Component} from 'react';
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
-  Navigator
+  Picker,
+  TouchableHighlight
 } from 'react-native';
 
-import MainView from './MainView';
-import RecommendView from './RecommendView';
-
-class MainApp extends Component {
-
+export default class RecommendView extends Component {
   constructor(props) {
     super(props);
-  }
+  };
 
+  _navigate(){
+    this.props.navigator.push({
+      title: 'Main', // Matches route.name
+    })
+  }
 
   render() {
     return (
       <View style={containerStyles.container}>
-        <View style={containerStyles.header}>
-          <Text style={textStyles.welcome}>
-            Header {this.props.title}
-          </Text>
-        </View>
         <View style={containerStyles.body}>
-          <Navigator
-            initialRoute={{ title: 'Main'}}
-            renderScene={ this.renderScene}
-          />
+          <View style={containerStyles.instructions}>
+            <Text style={textStyles.instructions}>
+              To get started, edit index.ios.js
+            </Text>
+            <Text style={textStyles.instructions}>
+              Press Cmd+R to reload,{'\n'}
+              Cmd+D or shake for dev menu
+            </Text>
+          </View>
+        </View>
+        <View style={containerStyles.footer}>
+          <TouchableHighlight onPress={() => this._navigate()}>
+            <Text style={textStyles.next}>
+              Home
+            </Text>
+          </TouchableHighlight>
         </View>
       </View>
     );
   }
-
-  renderScene(route, navigator) {
-    if (route.title == 'Main') {
-      return <MainView navigator={navigator} />
-    }
-    if (route.title == 'Recommend') {
-      return <RecommendView navigator={navigator} />
-    }
-  }
 }
+
+
 
 const textStyles = StyleSheet.create({
   welcome: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+  next : {
+    textAlign: 'center',
+    fontSize: 16,
   }
 });
 
@@ -92,5 +102,3 @@ const containerStyles = StyleSheet.create({
     width: 200,
   },
 });
-
-AppRegistry.registerComponent('CCPick', () => MainApp);
