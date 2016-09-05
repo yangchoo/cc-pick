@@ -8,14 +8,33 @@ import {
   Text,
   View,
   Picker,
-  TouchableHighlight
+  TouchableHighlight,
+  TextInput
 } from 'react-native';
+
+const styles = require('./styles.js');
+const CatPicker = require('./app/components/CatPicker');
+const CostInput = require('./app/components/CostInput');
+var ccData = require('./app/constants/db.json');
+
+import Button from './app/components/Button'
+
+const route = {
+  type: 'push',
+  route: {
+    key: 'about',
+    title: 'About'
+  }
+}
+
 
 export default class MainView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      category: 'food',
+      category: 'nothing',
+      categories: [],
+      cost: '0'
     }
   }
 
@@ -23,39 +42,61 @@ export default class MainView extends Component {
     title: "Main View",
   };
 
+  _getCat() {
+    var unique = {};
+    var distinct = [];
+    ccData.map(function(card) {
+      var cat = Object.keys(card.rewards);
+      for (var i in cat) {
+        if( cat[i] != "default" && typeof(unique[cat[i]]) == "undefined"){
+          distinct.push(cat[i]);
+        }
+        unique[cat[i]] = 0;
+      }
+    });
+    this.setState({
+        category: distinct[0]
+      });
+    return distinct
+  }
+
   _navigate(){
     this.props.navigator.push({
-      title: 'Recommend', // Matches route.name
+      title: 'Recommend',
+      passProps: {
+        category: this.state.category,
+        cost: this.state.cost
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.setState({
+      categories: this._getCat()
     })
   }
 
   render() {
-    console.log(this);
     return (
-      <View style={containerStyles.container}>
-        <View style={containerStyles.body}>
-          <View style={containerStyles.instructions}>
-            <Text style={textStyles.instructions}>
-              To get started, edit index.ios.js
-            </Text>
-            <Text style={textStyles.instructions}>
-              Press Cmd+R to reload,{'\n'}
-              Cmd+D or shake for dev menu
-            </Text>
-          </View>
-          <View style={containerStyles.category}>
-            <Picker
-              style={containerStyles.picker}
-              selectedValue={this.state.category}
-              onValueChange={(cat) => this.setState({category: cat})}>
-              <Picker.Item label="Food" value="food" />
-              <Picker.Item label="Online" value="online" />
-            </Picker>
-          </View>
+      <View style={styles.container}>
+        <View style={styles.body}>
+          <CostInput
+            onChangeText={(cost) => {
+                cost = cost.replace('$', '');
+                this.setState({cost})
+              }
+            }
+            value={"$" + this.state.cost}
+          />
+          <CatPicker
+            categories={this.state.categories}
+            selectedValue={this.state.category}
+            onValueChange={(cat) => this.setState({category: cat})}
+          />
         </View>
-        <View style={containerStyles.footer}>
+        <View style={styles.navBar}>
           <TouchableHighlight onPress={() => this._navigate()}>
-            <Text style={textStyles.next}>
+            <Text style={styles.next}>
               Selected {this.state.category}
             </Text>
           </TouchableHighlight>
@@ -64,58 +105,3 @@ export default class MainView extends Component {
     );
   }
 }
-
-
-
-const textStyles = StyleSheet.create({
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  next : {
-    textAlign: 'center',
-    fontSize: 16,
-  }
-});
-
-const containerStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'powderblue',
-  },
-  body: {
-    flex: 5,
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: 'lightgreen',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  category: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  instructions: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'steelblue',
-  },
-  picker: {
-    width: 200,
-  },
-});

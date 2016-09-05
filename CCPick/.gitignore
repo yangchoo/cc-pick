@@ -1,6 +1,7 @@
 # OSX
 #
 .DS_Store
+*.keystore
 
 # Xcode
 #
@@ -39,3 +40,7 @@ buck-out/
 \.buckd/
 android/app/libs
 android/keystores/debug.keystore
+
+# DB
+app/constants/db.json
+app/constants/Firebase.js

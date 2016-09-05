@@ -13,6 +13,8 @@ import {
 
 import MainView from './MainView';
 import RecommendView from './RecommendView';
+const styles = require('./styles.js')
+const StatusBar = require('./app/components/StatusBar');
 
 class MainApp extends Component {
 
@@ -23,13 +25,9 @@ class MainApp extends Component {
 
   render() {
     return (
-      <View style={containerStyles.container}>
-        <View style={containerStyles.header}>
-          <Text style={textStyles.welcome}>
-            Header {this.props.title}
-          </Text>
-        </View>
-        <View style={containerStyles.body}>
+      <View style={styles.container}>
+        <StatusBar title="Credit Card Picker" />
+        <View style={styles.body}>
           <Navigator
             initialRoute={{ title: 'Main'}}
             renderScene={ this.renderScene}
@@ -41,56 +39,12 @@ class MainApp extends Component {
 
   renderScene(route, navigator) {
     if (route.title == 'Main') {
-      return <MainView navigator={navigator} />
+      return <MainView navigator={navigator}{...route.passProps} />
     }
     if (route.title == 'Recommend') {
-      return <RecommendView navigator={navigator} />
+      return <RecommendView navigator={navigator}{...route.passProps} />
     }
   }
 }
-
-const textStyles = StyleSheet.create({
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  }
-});
-
-const containerStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'powderblue',
-  },
-  body: {
-    flex: 5,
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: 'lightgreen',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  category: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  instructions: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'steelblue',
-  },
-  picker: {
-    width: 200,
-  },
-});
 
 AppRegistry.registerComponent('CCPick', () => MainApp);
